@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+  <style>
+    body { 
+  margin: 0; 
+  /* Deep organic red gradient */
+  background: radial-gradient(circle, #4a0404 0%, #000000 100%); 
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica; 
+  overflow: hidden;
+}
+    model-viewer { width: 100vw; height: 100vh; }
+
+    .controls {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 50px;
+      backdrop-filter: blur(15px);
+    }
+
+    .heart-btn {
+      padding: 12px 24px;
+      border-radius: 40px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .heart-btn.active {
+      background: #fff;
+      color: #000;
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+<body>
+
+<model-viewer 
+  id="heartViewer"
+  src="./Heartmodel/Heartmodel.glb" 
+  ar 
+  camera-controls 
+  autoplay
+  exposure="1" shadow-softness="1"
+  camera-orbit="0deg 75deg 20m" 
+  field-of-view="10deg">
+</model-viewer>
+
+<div class="controls">
+  <button class="heart-btn active" 
+          data-src="./Heartmodel/Heartmodel.glb" 
+          exposure="1" shadow-softness="1"
+          data-orbit="0deg 75deg 20m" 
+          data-fov="10deg"
+          data-audio="false">Heart View</button>
+
+  <button class="heart-btn" 
+          data-src="./Heartmodel/HeartLabels.glb" 
+          exposure="1" shadow-softness="1"
+          data-orbit="0deg 75deg 2.5m" 
+          data-fov="30deg"
+          data-audio="true">Heart with Labeled View</button>
+</div>
+
+<audio id="labelAudio" src="./audio/heart_labels_audio.mp3" loop></audio>
+
+<script>
+  const modelViewer = document.querySelector('#heartViewer');
+  const buttons = document.querySelectorAll('.heart-btn');
+  const audio = document.getElementById("labelAudio");
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // Update asset, zoom distance, and visual scale (FOV)
+      modelViewer.src = btn.dataset.src;
+      modelViewer.cameraOrbit = btn.dataset.orbit;
+      modelViewer.fieldOfView = btn.dataset.fov;
+
+      if (btn.dataset.audio === "true") {
+        audio.play().catch(() => {});
+      } else {
+        audio.pause();
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
